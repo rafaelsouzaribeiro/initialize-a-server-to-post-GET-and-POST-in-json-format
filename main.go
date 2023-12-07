@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 )
 
@@ -33,30 +32,22 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func Request(w http.ResponseWriter, r *http.Request) {
+	var client Client
+
 	// Retorna um slice de bytes ([]byte, error)
-	resp, err := io.ReadAll(r.Body)
+	err := json.NewDecoder(r.Body).Decode(&client)
 
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	// pega o post json e converte para struct
-	var itens Client
-	err = json.Unmarshal(resp, &itens)
-
-	if err != nil {
-		panic(err)
-	}
-
-	// Pegar por form-data: r.PostFormValue("lastName")
-	client := Client{FirstName: itens.FirstName,
-		Work:     itens.Work,
-		LastName: itens.LastName}
 	// Pega struct e convert para json
 	jsonParse, err := json.Marshal(client)
 
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
