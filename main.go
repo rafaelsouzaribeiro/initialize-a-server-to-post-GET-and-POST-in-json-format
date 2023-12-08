@@ -34,7 +34,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 func Request(w http.ResponseWriter, r *http.Request) {
 	var client Client
 
-	// Retorna um slice de bytes ([]byte, error)
+	// Retorna um slice de bytes ([]byte, error).
 	err := json.NewDecoder(r.Body).Decode(&client)
 
 	if err != nil {
